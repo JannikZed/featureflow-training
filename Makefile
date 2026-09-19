@@ -1,7 +1,4 @@
-.PHONY: test-unit test-integration test-e2e test-all install run
-
-PYTHON ?= .venv/bin/python
-PYTEST ?= .venv/bin/pytest
+.PHONY: install run test-unit test-integration test-e2e test-all
 
 install:
 	python3 -m venv .venv
@@ -10,14 +7,7 @@ install:
 run:
 	.venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
-test-unit:
-	$(PYTEST) -m unit -q
-
-test-integration:
-	$(PYTEST) -m integration -q
-
-test-e2e:
-	$(PYTEST) -m e2e -q
-
-test-all:
-	$(PYTEST) -q
+# Starter ships without a test suite — participants add tests in the labs.
+test-unit test-integration test-e2e test-all:
+	@echo "No test suite in this starter. Tests are built during the labs (Tag 1 Spec-Driven Lab 4; Tag 2 Test-Agent / run-tests)." >&2
+	@exit 1

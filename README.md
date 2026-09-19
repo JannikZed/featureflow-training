@@ -2,7 +2,7 @@
 
 Brownfield starter for the 2026 Copilot / Agents training.
 
-**This is a training starter — intentionally imperfect.** It ships with a thin HTML UI, a SQLite-backed REST API, and a small test suite you will grow during the labs. Do not use it in production.
+**This is a training starter — intentionally imperfect.** It ships with a thin HTML UI and a SQLite-backed REST API. There is **no ready test suite** — you add tests during the labs. Do not use it in production.
 
 ## Clone
 
@@ -75,25 +75,20 @@ The HTML UI reads a toy role from the `ff_role` cookie (or `X-User-Role` header)
 app/              FastAPI app (API + Jinja routes + SQLite helpers)
 templates/        Thin HTML UI
 static/           Minimal CSS
-tests/            unit + integration + e2e (pytest markers)
-scripts/          test runner fallback
-Makefile          install / run / test helpers
+Makefile          install / run helpers
 requirements.txt
 ```
 
 ## Tests
 
-```bash
-source .venv/bin/activate
-make test-unit          # or: pytest -m unit -q
-make test-integration   # or: pytest -m integration -q
-make test-e2e           # or: pytest -m e2e -q
-make test-all
-```
+**Tests are not included in this starter.** You build them in the labs:
 
-Fallback: `./scripts/run-tests.sh all`
+- Tag 1 — Spec-Driven Lab 4
+- Tag 2 — Test-Agent / run-tests
+
+`make test-*` targets exist only as placeholders and exit with a short reminder until you add a suite.
 
 ## Notes
 
 - Persistence: SQLite file `featureflow.db` (gitignored).
-- You will add project context files (for example `AGENTS.md`) and more tests during the labs — start from this brownfield tree as-is.
+- You will add project context files (for example `AGENTS.md`) and tests during the labs — start from this brownfield tree as-is.
