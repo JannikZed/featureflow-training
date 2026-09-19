@@ -2,7 +2,7 @@
 
 Brownfield starter for the 2026 Copilot / Agents training.
 
-**This is a training starter — intentionally imperfect.** It ships with a thin HTML UI, a SQLite-backed REST API, almost no tests, and a deliberate authorization gap for day-2 security labs. Do not use it in production.
+**This is a training starter — intentionally imperfect.** It ships with a thin HTML UI, a SQLite-backed REST API, and a small test suite you will grow during the labs. Do not use it in production.
 
 ## Clone
 
@@ -22,11 +22,18 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open http://127.0.0.1:8000/ for the UI. API docs: http://127.0.0.1:8000/docs
+Or with Make:
 
-## Domain
+```bash
+make install
+make run
+```
 
-Issues / features with:
+Open http://127.0.0.1:8000/ for the UI. Interactive API docs: http://127.0.0.1:8000/docs
+
+## What is FeatureFlow?
+
+A minimal issues tracker:
 
 | Field | Notes |
 |-------|--------|
@@ -37,9 +44,9 @@ Issues / features with:
 | `assignee` | optional |
 | `created_at` | set on create |
 
-Comments hang off issues. Assignment and status changes are first-class API operations.
+Comments hang off issues. The HTML UI and REST API share the same SQLite database (`featureflow.db`, created on first start, gitignored).
 
-## Example curls
+## Quick API smoke checks
 
 ```bash
 # Create an issue
@@ -50,40 +57,43 @@ curl -s -X POST http://127.0.0.1:8000/api/issues \
 # List issues
 curl -s http://127.0.0.1:8000/api/issues
 
-# Update status (no AuthZ on API — by design for the lab)
-curl -s -X PATCH http://127.0.0.1:8000/api/issues/1 \
-  -H 'Content-Type: application/json' \
-  -d '{"status":"in_progress"}'
-
-# Assign
-curl -s -X POST http://127.0.0.1:8000/api/issues/1/assign \
-  -H 'Content-Type: application/json' \
-  -d '{"assignee":"alex"}'
-
 # Comment
 curl -s -X POST http://127.0.0.1:8000/api/issues/1/comments \
   -H 'Content-Type: application/json' \
   -d '{"author":"alex","body":"Looks good"}'
 ```
 
-## UI role toy
+Explore further endpoints via `/docs`.
 
-The HTML UI reads a toy role from the `ff_role` cookie (or `X-User-Role` header): `admin` \| `user`. Use the header switcher to flip roles. Non-admins do not see admin controls (status / assign / delete). The REST API does **not** enforce that role — that mismatch is intentional.
+## UI role switcher
 
-Trainers: see [SECURITY_LAB.md](SECURITY_LAB.md).
+The HTML UI reads a toy role from the `ff_role` cookie (or `X-User-Role` header): `admin` \| `user`. Use the header switcher to flip roles and see how the UI changes. Roles are a demo convenience only — there is no JWT/OAuth.
 
 ## Layout
 
 ```
-app/           FastAPI app (API + Jinja routes + SQLite helpers)
-templates/     Thin HTML UI
-static/        Minimal CSS
+app/              FastAPI app (API + Jinja routes + SQLite helpers)
+templates/        Thin HTML UI
+static/           Minimal CSS
+tests/            unit + integration + e2e (pytest markers)
+scripts/          test runner fallback
+Makefile          install / run / test helpers
 requirements.txt
-SECURITY_LAB.md
 ```
+
+## Tests
+
+```bash
+source .venv/bin/activate
+make test-unit          # or: pytest -m unit -q
+make test-integration   # or: pytest -m integration -q
+make test-e2e           # or: pytest -m e2e -q
+make test-all
+```
+
+Fallback: `./scripts/run-tests.sh all`
 
 ## Notes
 
-- Persistence: SQLite file `featureflow.db` (created on first start; gitignored).
-- No JWT / OAuth — roles are a demo cookie/header only.
-- Almost no automated tests on purpose (day-2 lab material).
+- Persistence: SQLite file `featureflow.db` (gitignored).
+- You will add project context files (for example `AGENTS.md`) and more tests during the labs — start from this brownfield tree as-is.
