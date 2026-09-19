@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}FeatureFlow{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">FeatureFlow</a>
+    <nav class="role-switch">
+      <span class="role-badge role-{{ role }}">role: {{ role }}</span>
+      <form method="post" action="/set-role" class="inline">
+        <select name="role" onchange="this.form.submit()">
+          <option value="user" {% if role == 'user' %}selected{% endif %}>user</option>
+          <option value="admin" {% if role == 'admin' %}selected{% endif %}>admin</option>
+        </select>
+      </form>
+    </nav>
+  </header>
+  <main class="container">
+    {% if request.query_params.get('denied') %}
+      <p class="flash warn">Action denied in UI (role={{ role }}). Try the API — it may not check.</p>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="footer">
+    <small>Training starter — intentionally imperfect. UI gates ≠ AuthZ.</small>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Issues — FeatureFlow{% endblock %}
+{% block content %}
+  <h1>Issues</h1>
+  {% if error %}<p class="flash error">{{ error }}</p>{% endif %}
+
+  <section class="card">
+    <h2>New issue</h2>
+    <form method="post" action="/issues" class="stack">
+      <label>Title <input name="title" required maxlength="200"></label>
+      <label>Description <textarea name="description" rows="3"></textarea></label>
+      <button type="submit">Create</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>All issues ({{ issues|length }})</h2>
+    {% if not issues %}
+      <p class="muted">No issues yet.</p>
+    {% else %}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Title</th><th>Status</th><th>Assignee</th><th></th>
+            {% if is_admin %}<th>Admin</th>{% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for issue in issues %}
+          <tr>
+            <td>#{{ issue.id }}</td>
+            <td><a href="/issues/{{ issue.id }}">{{ issue.title }}</a></td>
+            <td><span class="status status-{{ issue.status }}">{{ issue.status }}</span></td>
+            <td>{{ issue.assignee or "—" }}</td>
+            <td><a href="/issues/{{ issue.id }}">View</a></td>
+            {% if is_admin %}
+            <td>
+              <form method="post" action="/issues/{{ issue.id }}/delete" class="inline"
+                    onsubmit="return confirm('Delete #{{ issue.id }}?');">
+                <button type="submit" class="danger">Delete</button>
+              </form>
+            </td>
+            {% endif %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </section>
+{% endblock %}
